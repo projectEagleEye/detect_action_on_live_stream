@@ -21,6 +21,11 @@ TempCH2 = []
 TempCH3 = []
 TempCH4 = []
 counter232 = 0
+
+# Timestamp functions
+timestamp_delay = 0.5
+timestamp_handler = time.time()
+timestamp_action = time.time() - timestamp_delay
 # Below is a counter function to count the function (eeg_handler) call times
 
 
@@ -62,11 +67,12 @@ def Blink():
       #  WithinRangeCH3 = any((770 > e or e > 880) for e in TempCH3[(len(TempCH3)-30):(len(TempCH3)-3)])
       #  and WithinRangeCH3 == False        
         if ( DownwardSpikeCH1 == True and DownwardSpikeCH4 == True) :
-                    # print("_____")
-                    # print("Blink") 
-                    # print("_____")
+                    print("_____")
+                    print("Blink") 
+                    print("_____")
 
-                    return
+                    return True
+    return False
 
 def LookUp():
     
@@ -88,13 +94,14 @@ def LookUp():
         #WithinRangeCH3: We want to see some fluctuation so we need at least one value out of the range
                 
         if ( DownwardSpikeCH1 == True and DownwardSpikeCH4 == True and WithinRangeCH3 == True) :
-                    # print("_____")
-                    # print("Look Up") 
-                    # print("_____")
-                    msg = "takeoff"
+                    print("_____")
+                    print("Look Up") 
+                    print("_____")
+                    """msg = "takeoff"
                     msg = msg.encode(encoding="utf-8") 
-                    sent = sock.sendto(msg, tello_address)
-                    return
+                    sent = sock.sendto(msg, tello_address)"""
+                    return True
+    return False
     
 def LookRight():
     
@@ -111,17 +118,18 @@ def LookRight():
         DownwardSpikeCH2 = any((e < 830 and e > 740 )for e in TempCH2[(len(TempCH2)-30):(len(TempCH2)-3)])   
                 
         if ( UpwardSpikeCH3 == True and DownwardSpikeCH2 == True ) :
-                    # print("_____")
-                    # print("look Right") 
-                    # print("_____")
-                    msg = "right 10"
+                    print("_____")
+                    print("look Right") 
+                    print("_____")
+                    """msg = "right 10"
                     msg = msg.encode(encoding="utf-8") 
                     sent = sock.sendto(msg, tello_address)
                     time.sleep(5);
                     msg = "left 10"
                     msg = msg.encode(encoding="utf-8") 
-                    sent = sock.sendto(msg, tello_address)
-                    return
+                    sent = sock.sendto(msg, tello_address)"""
+                    return True
+    return False
                 
 def LookLeft():
     
@@ -140,13 +148,14 @@ def LookLeft():
         DownwardSpikeCH4 = any(f < 830 for f in TempCH4[(len(TempCH4)-30):(len(TempCH3)-3)])
                 
         if ( DownwardSpikeCH3 == True and UpwardSpikeCH2 == True and DownwardSpikeCH4 == True ) :
-                    # print("_____")
-                    # print("look Left") 
-                    # print("_____")
-                    msg = "land"
+                    print("_____")
+                    print("look Left") 
+                    print("_____")
+                    """msg = "land"
                     msg = msg.encode(encoding="utf-8") 
-                    sent = sock.sendto(msg, tello_address)
-                    return
+                    sent = sock.sendto(msg, tello_address)"""
+                    return True
+    return False
                         
     
 #the eeg_handler function imports the OSC values with a frequence of
@@ -154,23 +163,29 @@ def LookLeft():
 
 def eeg_handler(unused_addr, args, ch1, ch2, ch3, ch4):
   
-    time.sleep(30)
-    if True:
-        #print("EEG (uV) per channel: ", ch1, ch2, ch3, ch4)
-        #print("counter works!!", counter.calls)
-        TempCH1.append(ch1)
-        TempCH2.append(ch2)
-        TempCH3.append(ch3)
-        TempCH4.append(ch4)
-        
-        
-        Blink()
-        LookRight()
-        LookLeft()
-        LookUp()
-        sample()
-                    
-        counter.calls = 0 #resetting the counter so that it counts back to 10 every time
+    #print("EEG (uV) per channel: ", ch1, ch2, ch3, ch4)
+    #print("counter works!!", counter.calls)
+    TempCH1.append(ch1)
+    TempCH2.append(ch2)
+    TempCH3.append(ch3)
+    TempCH4.append(ch4)
+    
+    global timestamp_handler;
+    global timestamp_action;
+    global timestamp_delay;
+    timestamp_handler = time.time() 
+
+    if ((timestamp_handler - timestamp_action) >= timestamp_delay):
+        if Blink():
+            timestamp_action = time.time()
+        elif LookRight():
+            timestamp_action = time.time()
+        elif LookLeft():
+            timestamp_action = time.time()
+        elif LookUp():
+            timestamp_action = time.time()
+                
+    counter.calls = 0 #resetting the counter so that it counts back to 10 every time
   
 #Below is the function to receive the OSC live feed from the muse
 
@@ -207,26 +222,26 @@ print ('\r\n\r\nTello Python3 Demo.\r\n')
 recvThread = threading.Thread(target=recv)
 recvThread.start()
 
-while True: 
+# while True: 
 
-    try:
-        msg = input("");
+#     try:
+#         msg = input("");
 
-        if not msg:
-            break  
+#         if not msg:
+#             break  
 
-        if 'end' in msg:
-            print ('...')
-            sock.close()  
-            break
+#         if 'end' in msg:
+#             print ('...')
+#             sock.close()  
+#             break
 
-        # Send data
-        msg = msg.encode(encoding="utf-8") 
-        sent = sock.sendto(msg, tello_address)
-    except KeyboardInterrupt:
-        print ('\n . . .\n')
-        sock.close()  
-        break
+#         # Send data
+#         msg = msg.encode(encoding="utf-8") 
+#         sent = sock.sendto(msg, tello_address)
+#     except KeyboardInterrupt:
+#         print ('\n . . .\n')
+#         sock.close()  
+#         break
 
 if __name__ == "__main__":
     counter.calls = 0
@@ -244,6 +259,7 @@ if __name__ == "__main__":
                         default="",
                         help="Arduino serial port")
     args = parser.parse_args()
+
     
     dispatcher = dispatcher.Dispatcher()
     dispatcher.map("/debug", print)
