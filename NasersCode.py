@@ -207,6 +207,27 @@ print ('\r\n\r\nTello Python3 Demo.\r\n')
 recvThread = threading.Thread(target=recv)
 recvThread.start()
 
+while True: 
+
+    try:
+        msg = input("");
+
+        if not msg:
+            break  
+
+        if 'end' in msg:
+            print ('...')
+            sock.close()  
+            break
+
+        # Send data
+        msg = msg.encode(encoding="utf-8") 
+        sent = sock.sendto(msg, tello_address)
+    except KeyboardInterrupt:
+        print ('\n . . .\n')
+        sock.close()  
+        break
+
 if __name__ == "__main__":
     counter.calls = 0
     parser = argparse.ArgumentParser()
@@ -233,24 +254,5 @@ if __name__ == "__main__":
     print("Serving on {}".format(server.server_address))
     server.serve_forever()
 
-while True: 
 
-    try:
-        msg = input("");
-
-        if not msg:
-            break  
-
-        if 'end' in msg:
-            print ('...')
-            sock.close()  
-            break
-
-        # Send data
-        msg = msg.encode(encoding="utf-8") 
-        sent = sock.sendto(msg, tello_address)
-    except KeyboardInterrupt:
-        print ('\n . . .\n')
-        sock.close()  
-        break
 
