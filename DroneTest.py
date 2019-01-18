@@ -34,21 +34,21 @@ def counter(x):
 
 
 def LookLeft():
-    UpwardSpikeCH3 = any(a > 880 for a in TempCH3[(len(TempCH3) - 5):(len(TempCH3) - 1)])
+    upward_spike_ch3 = any(a > 880 for a in TempCH3[(len(TempCH3) - 5):(len(TempCH3) - 1)])
 
-    DownwardSpikeCH2 = any(b < 830 for b in TempCH2[(len(TempCH2) - 5):(len(TempCH2) - 1)])
+    downward_spike_ch2 = any(b < 830 for b in TempCH2[(len(TempCH2) - 5):(len(TempCH2) - 1)])
 
-    WithinRangeCH1 = any((740 > c or c > 920) for c in TempCH1[(len(TempCH1) - 30):(len(TempCH1) - 3)])
+    within_range_ch1 = any((740 > c or c > 920) for c in TempCH1[(len(TempCH1) - 30):(len(TempCH1) - 3)])
 
-    if DownwardSpikeCH2 == True and UpwardSpikeCH3 == True and WithinRangeCH1 == False:
+    if downward_spike_ch2 and upward_spike_ch3 and not within_range_ch1:
 
-        UpwardSpikeCH2 = any(d > 870 for d in TempCH2[(len(TempCH2) - 30):(len(TempCH2) - 3)])
+        upward_spike_ch2 = any(d > 870 for d in TempCH2[(len(TempCH2) - 30):(len(TempCH2) - 3)])
 
-        DownwardSpikeCH3 = any(e < 820 for e in TempCH3[(len(TempCH3) - 30):(len(TempCH3) - 3)])
+        downward_spike_ch3 = any(e < 820 for e in TempCH3[(len(TempCH3) - 30):(len(TempCH3) - 3)])
 
-        DownwardSpikeCH4 = any(f < 830 for f in TempCH4[(len(TempCH4) - 30):(len(TempCH3) - 3)])
+        downward_spike_ch4 = any(f < 830 for f in TempCH4[(len(TempCH4) - 30):(len(TempCH3) - 3)])
 
-        if DownwardSpikeCH3 and UpwardSpikeCH2 and DownwardSpikeCH4:
+        if downward_spike_ch3 and upward_spike_ch2 and downward_spike_ch4:
           
             print("look Left")
             print("_____")
@@ -58,23 +58,24 @@ def LookLeft():
 
 
 def LookRight():
-    DownwardSpikeCH3 = any(a < 810 for a in TempCH3[(len(TempCH3) - 5):(len(TempCH3) - 1)])
+    downward_spike_ch3 = any(a < 810 for a in TempCH3[(len(TempCH3) - 5):(len(TempCH3) - 1)])
 
-    DownwardSpikeCH4 = any(b < 810 for b in TempCH4[(len(TempCH4) - 5):(len(TempCH4) - 1)])
+    downward_spike_ch4 = any(b < 810 for b in TempCH4[(len(TempCH4) - 5):(len(TempCH4) - 1)])
 
-    WithinRangeCH1 = any((780 > c or c > 880) for c in TempCH1[(len(TempCH1) - 30):(len(TempCH1) - 3)])
+    within_range_ch1 = any((780 > c or c > 880) for c in TempCH1[(len(TempCH1) - 30):(len(TempCH1) - 3)])
 
-    if DownwardSpikeCH3 and DownwardSpikeCH4 and WithinRangeCH1:
+    if downward_spike_ch3 and downward_spike_ch4 and within_range_ch1:
 
-        UpwardSpikeCH3 = any(d > 870 for d in TempCH3[(len(TempCH3) - 30):(len(TempCH3) - 3)])
+        upward_spike_ch3 = any(d > 870 for d in TempCH3[(len(TempCH3) - 30):(len(TempCH3) - 3)])
 
-        DownwardSpikeCH2 = any((e < 830 and e > 740) for e in TempCH2[(len(TempCH2) - 30):(len(TempCH2) - 3)])
+        downward_spike_ch2 = any((740 < e < 830) for e in TempCH2[(len(TempCH2) - 30):(len(TempCH2) - 3)])
 
-        if UpwardSpikeCH3 and DownwardSpikeCH2:
+        if upward_spike_ch3 and downward_spike_ch2:
 
             print("look Right")
             return True
     return False
+
 
 """
 def blink(unused_addr, args, ch5):
