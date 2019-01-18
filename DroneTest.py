@@ -13,22 +13,13 @@ import pythonosc
 import time
 import threading
 import sys
-import keyboard
 
 from pythonosc import dispatcher
 from pythonosc import osc_server
 from pythonosc import udp_client
 from pythonosc import osc_message_builder
 
-# Get time delay
-current_time = time.time()
-current_time_lead = time.time()
 
-# Detected action counters
-blink_cnt = 0
-jaw_clench_cnt = 0
-look_left_cnt = 0
-look_right_cnt = 0
 
 # Array to store OSC data for further processing
 TempCH1 = []
@@ -58,9 +49,8 @@ def LookLeft():
         DownwardSpikeCH4 = any(f < 830 for f in TempCH4[(len(TempCH4) - 30):(len(TempCH3) - 3)])
 
         if DownwardSpikeCH3 and UpwardSpikeCH2 and DownwardSpikeCH4:
-            global look_left_cnt
-            look_left_cnt += 1
-            print(look_left_cnt, ": look Left")
+          
+            print("look Left")
             print("_____")
             return True
 
@@ -81,27 +71,24 @@ def LookRight():
         DownwardSpikeCH2 = any((e < 830 and e > 740) for e in TempCH2[(len(TempCH2) - 30):(len(TempCH2) - 3)])
 
         if UpwardSpikeCH3 and DownwardSpikeCH2:
-            global look_right_cnt
-            look_right_cnt += 1
-            print(look_right_cnt, ": look Right")
+
+            print("look Right")
             return True
     return False
 
-
+"""
 def blink(unused_addr, args, ch5):
     if ch5 > 0.2:
-        global blink_cnt
-        blink_cnt += 1
-        print(blink_cnt, ": Blinked rigorously")
+       
+        print("Blinked rigorously")
         return True
     return False
-
+"""
 
 def jawClench(unused_addr, args, ch6):
     if ch6 > 0.2:
-        global jaw_clench_cnt
-        jaw_clench_cnt += 1
-        print(jaw_clench_cnt, ": Not very rigorous clench")
+
+        print("clench")
         return True
     return False
 
@@ -120,22 +107,9 @@ def eeg_handler(unused_addr, args, ch1, ch2, ch3, ch4):
         TempCH3.append(ch3)
         TempCH4.append(ch4)
 
-        global current_time, current_time_lead
-        current_time_lead = time.time()
-
-    if (current_time_lead - current_time) >= 1:
-        #  if Blink():
-        #  timestamp_action = time.time()
-        if LookLeft():
-            current_time = time.time()
-            # command_center.update(1)  # Take off
-        elif LookRight():
-            current_time = time.time()
-            # command_center.update(3)  # Force Stop
-        elif jawClench():
-            current_time = time.time()
-            # command_center.update(2)  # Land
-
+        LookLeft()
+        LookRight()
+ 
         counter.calls = 0  # resetting the counter so that it counts back to 10 every time
 
 
@@ -161,7 +135,7 @@ if __name__ == "__main__":
     dispatcher.map("/debug", print)
     dispatcher.map("/muse/notch_filtered_eeg", eeg_handler, "EEG")
     dispatcher.map("/muse/elements/jaw_clench", jawClench, "EEG")
-    dispatcher.map("/muse/elements/blink", blink, "EEG")
+ #########################################################################   dispatcher.map("/muse/elements/blink", blink, "EEG")
 
     server = osc_server.ThreadingOSCUDPServer(
         (args.ip, args.port), dispatcher)
