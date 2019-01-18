@@ -23,8 +23,8 @@ tello_address = ('192.168.10.1', 8889)
 
 sock.bind(locaddr)
 
+
 def recv():
-    count = 0
     while True: 
         try:
             data, server = sock.recvfrom(1518)
@@ -34,32 +34,33 @@ def recv():
             break
 
 
-print ('\r\n\r\nTello Python3 Demo.\r\n')
+print('\r\n\r\nTello Python3 Demo.\r\n')
 
-print ('Tello: command takeoff land flip forward back left right \r\n       up down cw ccw speed speed?\r\n')
+print('Tello: command takeoff land flip forward back left right \r\n       up down cw ccw speed speed?\r\n')
 
-print ('end -- quit demo.\r\n')
+print('end -- quit demo.\r\n')
 
 
-#recvThread create
+# recvThread create
 recvThread = threading.Thread(target=recv)
 recvThread.start()
 
 while True: 
     try:
         python_version = str(platform.python_version())
-        version_init_num = int(python_version.partition('.')[0]) 
-       # print (version_init_num)
+        version_init_num = int(python_version.partition('.')[0])
+        msg = ''
+        # print (version_init_num)
         if version_init_num == 3:
-            msg = input("");
+            msg = input("")
         elif version_init_num == 2:
-            msg = raw_input("");
+            msg = raw_input("")
         
         if not msg:
-            break  
+            break
 
         if 'end' in msg:
-            print ('...')
+            print('...')
             sock.close()  
             break
 
