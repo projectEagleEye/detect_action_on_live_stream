@@ -13,7 +13,7 @@ import platform
 
 host = ''
 port = 9000
-locaddr = (host,port) 
+locaddr = (host, port)
 
 
 # Create a UDP socket
