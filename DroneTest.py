@@ -13,6 +13,7 @@ import pythonosc
 import time
 import threading
 import sys
+import keyboard
 
 from pythonosc import dispatcher
 from pythonosc import osc_server

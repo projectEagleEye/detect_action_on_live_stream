@@ -67,7 +67,7 @@ while True:
         msg = msg.encode(encoding="utf-8") 
         sent = sock.sendto(msg, tello_address)
     except KeyboardInterrupt:
-        print ('\n . . .\n')
+        print('\n . . .\n')
         sock.close()  
         break
 
