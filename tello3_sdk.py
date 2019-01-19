@@ -30,7 +30,7 @@ def recv():
             data, server = sock.recvfrom(1518)
             print(data.decode(encoding="utf-8"))
         except Exception:
-            print ('\nExit . . .\n')
+            print('\nExit . . .\n')
             break
 
 
@@ -57,9 +57,9 @@ while True:
             msg = raw_input("")
         
         if not msg:
-            break
+            continue
 
-        if 'end' in msg:
+        if 'end' or 'q' in msg:
             print('...')
             sock.close()  
             break
