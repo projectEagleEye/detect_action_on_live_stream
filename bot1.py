@@ -1,0 +1,1 @@
+print('bot1 best 1 bot 1 best 11111111111111111')

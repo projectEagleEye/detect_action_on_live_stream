@@ -1,6 +1,6 @@
 from time import sleep
 import tellopy
-
+import DroneTest
 
 def handler(event, sender, data, **args):
     drone = sender
@@ -16,11 +16,13 @@ def test():
         drone.connect()
         drone.wait_for_connection(60.0)
         drone.takeoff()
-        sleep(5)
-        drone.forward(50)
-        sleep(5)
-        drone.land()
-        sleep(5)
+        sleep(2)
+        if jawClench() == true:
+            drone.forward(1)
+        if LookLeft() == true:
+            drone.land()
+        if LookRight() == true:
+            drone.right(1)
     except Exception as ex:
         print(ex)
     finally:

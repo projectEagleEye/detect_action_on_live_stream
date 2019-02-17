@@ -13,10 +13,12 @@ Description:
 # Import libraries and packages
 import tellopy
 import time
+from time import sleep
 
 tello_drone = tellopy.Tello()
 tello_drone.connect()
 tello_drone.takeoff()
+tello_drone.counter_clockwise(300)
 time.sleep(3)
 tello_drone.land()
 
