@@ -1,5 +1,5 @@
-from time import sleep
-import tellopy
+
+
 import DroneTest
 
 def handler(event, sender, data, **args):

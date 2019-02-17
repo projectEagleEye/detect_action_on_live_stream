@@ -17,32 +17,12 @@ from pythonosc import osc_server
 from pythonosc import udp_client
 from pythonosc import osc_message_builder
 import multiprocessing
-from multiprocessing import Process
-from threading import Timer
-
-from tellopy._internal.utils import *
-
-prev_flight_data = None
 
 
 def handler(event, sender, data, **args):
-    global prev_flight_data
     drone = sender
-    if event is drone.EVENT_CONNECTED:
-        print('connected')
-        drone.start_video()
-        drone.set_exposure(0)
-        drone.set_video_encoder_rate(4)
-    elif event is drone.EVENT_FLIGHT_DATA:
-        if prev_flight_data != str(data):
-            print(data)
-            prev_flight_data = str(data)
-    elif event is drone.EVENT_TIME:
-        print('event="%s" data=%d' % (event.getname(), data[0] + data[1] << 8))
-    elif event is drone.EVENT_VIDEO_FRAME:
-        pass
-    else:
-        print('event="%s" data=%s' % (event.getname(), str(data)))
+    if event is drone.EVENT_FLIGHT_DATA:
+        print(data)
 
 
 # Array to store OSC data for further processing
@@ -58,6 +38,7 @@ def counter(x):
 
 first_lookLeft = False
 def LookLeft():
+    global first_lookLeft
     upward_spike_ch3 = any(a > 880 for a in TempCH3[(len(TempCH3) - 5):(len(TempCH3) - 1)])
 
     downward_spike_ch2 = any(b < 830 for b in TempCH2[(len(TempCH2) - 5):(len(TempCH2) - 1)])
@@ -77,6 +58,9 @@ def LookLeft():
             print("look Left")
             print("_____")
             first_lookLeft = True
+            drone.backward(60)
+            time.sleep(0.7)
+            drone.backward(0)
 
             #############################################################################
             #############################################################################
@@ -101,6 +85,7 @@ def LookRight():
         if upward_spike_ch3 and downward_spike_ch2:
 
             print("look Right")
+            drone.land()
             return True
     return False
 
@@ -113,22 +98,30 @@ def blink(unused_addr, args, ch5):
         return True
     return False
 """
+
+"""
 def Resetbool():
+    global first_clench
+    global first_lookLeft
     first_lookLeft = False
     first_clench = False
-    Timer(5.0,Resetbool())
-
+    Timer(3.0,Resetbool())
+"""
+"""
 def backward():
+    global first_lookLeft
+    global first_clench
     if first_lookLeft == True:
         if first_clench == True:
             drone.backward(60)
             time.sleep(0.7)
             drone.backward(0)
             print ('back')
-
+"""
 first_clench = False
 def Clenched():
     global drone
+    global first_clench
     first_clench = True
     drone.forward(60)
     time.sleep(0.7)
@@ -182,11 +175,10 @@ if __name__ == "__main__":
     drone.wait_for_connection(5.0)
     drone.takeoff()
 
-    p1 = Process(target=Resetbool)
+    #p1 = Process(target=Resetbool)
 
-    p1.start()
-    #    p2.start()
     #p1.start()
+    #    p2.start()
     #    p1.join()
     #    p2.join()
 
